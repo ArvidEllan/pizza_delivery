@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfield import PhoneNumberField
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
@@ -30,3 +31,22 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("Superuser should have is_superuser as True"))
         if extra_fields.get('is_active') is not True:
             raise ValueError(_("Superuser should have is_active as True"))
+        
+        return self.create_user(email,password,**extra_fields)
+    
+class User(AbstractUser):
+    username=models.CharField(max_length=25,unique=True)
+    emails=models.EmailField(max_length=80,unique=True)
+    phone_number=models.CharField(max_length=10,null=False,unique=True)
+    
+    USERNAME_FIELD='email'
+    
+    
+    REQUIRED_FIELDS=[
+        
+        'username','phone_number'
+    ]
+        
+    def __str__(self):
+        return f"<User {self.email}"
+    
