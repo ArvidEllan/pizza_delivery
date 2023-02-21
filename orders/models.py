@@ -31,3 +31,6 @@ class Order(models.Model):
     size=models.CharField(max_length=20,choices=SIZES,default=SIZES[0][0])
     order_status=models.CharField(max_length=20,choices=ORDER_STATUS,default=ORDER_STATUS[0][0])
     quantity=models.IntegerField()
+
+    def __str__(self) -> str:
+        return f"<Order {self.size} by {self.customer.id}>"
