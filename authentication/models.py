@@ -35,9 +35,9 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email,password,**extra_fields)
     
 class User(AbstractUser):
-    username=models.CharField(max_length=25,unique=True,related_name="username")
-    emails=models.EmailField(max_length=80,unique=True,related_name="user_email")
-    phone_number=PhoneNumberField(unique=True,null=False,blank=False,related_name="userphonenumber")
+    username=models.CharField(max_length=25,unique=True)
+    emails=models.EmailField(max_length=80,unique=True)
+    phone_number=PhoneNumberField(unique=True,null=False,blank=False)
     
     USERNAME_FIELD='email'
     
