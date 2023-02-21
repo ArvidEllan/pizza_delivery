@@ -34,3 +34,4 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"<Order {self.size} by {self.customer.id}>"
+        #make migration for the db to make the table of orders
