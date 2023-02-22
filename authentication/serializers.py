@@ -1,5 +1,6 @@
 from .models import User
 from rest_framework import serializers
+from phonenumber_field.serializerfields import PhoneNumberField
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
