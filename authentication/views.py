@@ -23,7 +23,7 @@ class UserCreateView(generics.GenericAPIView):
             serializer.save()
             return Response(data=serializer.data,status=status.HTTP_201_CREATED)
         
-        return Response(data=serializer.errors,status_code=status.HTTP_400_BAD_REQUEST)
+        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
         
         

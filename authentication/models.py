@@ -40,13 +40,13 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractUser):
     username=models.CharField(_('Username'), max_length=40,unique=True)
-    email=models.CharField(_('Email'), max_length=80,unique=True)
-    phone_number=PhoneNumberField(unique=True,null=True,blank=True)
+    email=models.EmailField(_('Email'), max_length=80,unique=True)
+    phone_number=models.CharField(max_length=10,unique=True,null=True,blank=True)
     date_joined=models.DateTimeField(_('Date'),auto_now_add=True)
 
 
-    REQUIRED_FIELDS=['username','phone_number']
-    USERNAME_FIELD='email'
+    REQUIRED_FIELDS=['phone_number']
+    
 
     
     objects=CustomUserManager()
