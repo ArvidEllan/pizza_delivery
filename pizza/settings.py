@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     
     #thirdparty
     'rest_framework',
+    'djoser',
+   
     
 ]
 
@@ -52,10 +54,19 @@ AUTH_USER_MODEL='authentication.User'
 REST_FRAMEWORK={
     
     'NON_FIELD_ERRORS_KEY':'errors',
-    
-    
+     'DEFAULT_AUTHENTICATION_CLASSES': (
+        
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ),
+     
     
 }
+
+SIMPLE_JWT = (
+    
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
