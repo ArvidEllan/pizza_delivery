@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics,status 
 from rest_framework.response import Response
 from . import serializers
+from django.contrib.auth import get_user_model
+User=get_user_model()
 # Create your views here.
 
 class HelloAuthView(generics.GenericAPIView):
@@ -18,6 +20,17 @@ class UserCreateView(generics.GenericAPIView):
         data=request.data
         
         serializer=self.serializer_class(data=data)
+        email = request.data.get('email')
+        print(email)
+        user = User.objects.filter(email=email)
+        
+        if user.exists():
+            return Response({
+                'status': False,
+                'message': 'User with this email exists'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        
         
         if serializer.is_valid():
             serializer.save()
