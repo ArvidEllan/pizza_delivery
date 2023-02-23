@@ -62,11 +62,11 @@ REST_FRAMEWORK={
     
 }
 
-SIMPLE_JWT = (
+SIMPLE_JWT = {
     
     'AUTH_HEADER_TYPES': ('Bearer',),
     
-)
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
