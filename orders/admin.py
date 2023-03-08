@@ -5,3 +5,5 @@ from .models import Order
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display=['size','order_status','quantity']
+    list_filter=['created_at','order_status','size']
+    

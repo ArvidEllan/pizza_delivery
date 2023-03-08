@@ -47,6 +47,8 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS=['phone_number']
     
+    
+    
 
     
     objects=CustomUserManager()
