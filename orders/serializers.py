@@ -5,8 +5,8 @@ class OrderCreationSerializer(serializers.ModelSerializer):
     
     
    
-    size=serializers.CharField(max_length=20,choices=SIZES,default=SIZES[0][0])
-    order_status=serializers.HiddenField(max_length=20,default='PENDING')
+    size=serializers.CharField(max_length=20)
+    order_status=serializers.HiddenField(default='PENDING')
     quantity=serializers.IntegerField()
    
     
