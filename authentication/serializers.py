@@ -34,3 +34,14 @@ class UserCreationSerializer(serializers.ModelSerializer):
         
         
         return super().validate(attrs)
+    
+    
+    
+class UserLoginSerializer(serializers.Serializer):
+    email=serializers.EmailField(max_length=80)
+    password=serializers.CharField(min_length=8)
+    
+    
+        
+        
+        

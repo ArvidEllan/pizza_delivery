@@ -48,7 +48,7 @@ class OrderCreateListView(generics.GenericAPIView):
     
 class OrderDetailView(generics.GenericAPIView):
     serializer_class=serializers.OrderDetailSerializer
-    permission_classes=IsAuthenticated
+    permission_classes=[IsAuthenticated]
     
     def get(self,request,order_id):
         
@@ -74,17 +74,6 @@ class OrderDetailView(generics.GenericAPIView):
         
         return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
-        
-       # user=request.user
-        
-       # serializer=self.serializer_class(data=data)
-        
-        #if serializer.is_valid():
-        #    serializer.save(customer=user)
-            
-         #   return Response(data=serializer.data,status=status.HTTP_200_OK)
-        
-        #return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
@@ -112,6 +101,29 @@ class UpdateOrderStatus(generics.GenericAPIView):
         return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
         
-            
+    def delete(self,request):
+        order=get_object_or_404(Order,pk=order_id)
         
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)    
+    
+    
+class UpdateOrderStatus(generics.GenericAPIView):
+    serializer_class=serializers.OrderStatusUpdateSerializer
+    
+    
+    def put(self,request,order_id):
+        
+        order=get_object_or_404(Order,pk=order_id)
+        
+        date=request.data
+        
+        serializer=self.serializer_class(data=data,instance=order)
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            return Response(data=serializer.errors,status=status.HTTP_200_OK)
+        
+        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
