@@ -41,13 +41,27 @@ class UserCreateView(generics.GenericAPIView):
         
 class UserLoginView(generics.GenericAPIView):
     
-    serializer_class=serializers.UserLoginSerializer   
-    
-    
-    
+    serializer_class=serializers.UserLoginSerializer    
     
     def post(self,request):
         data=request.data 
+        user=request.user
+        
+        serializer=self.serializer_class(data=data)
+        
+        user.object.filter(email=email)
+        if not user.exists():
+            return Response({
+                'status': False,
+                'message': 'User with this email does not exist, kindly sign up'
+            }, status=status.HTTP_403_FORBIDDEN)
+            
+        if not  serializer.is_valid():
+            serializer.save()
+            return Response(errors=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+      
+        
+        
         
         
         serializer=self.serializer_class(data=data)
