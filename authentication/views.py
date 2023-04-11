@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics,status 
 from rest_framework.response import Response
 from . import serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 User=get_user_model()
 # Create your views here.
 
@@ -18,8 +18,20 @@ class UserCreateView(generics.GenericAPIView):
 
     def post(self,request):
         data=request.data
-        
         serializer=self.serializer_class(data=data)
+        
+        if not serializer.is_valid():
+            
+                return Response({
+                    'message':'invalid information',
+                    'status':status.HTTP_400_BAD_REQUEST,
+                    'errors': serializer.errors})
+                
+                
+                    
+        
+    
+        
         email = request.data.get('email')
         print(email)
         user = User.objects.filter(email=email)
@@ -30,14 +42,16 @@ class UserCreateView(generics.GenericAPIView):
                 'message': 'User with this email exists'
             }, status=status.HTTP_403_FORBIDDEN)
         
+        else:
+            return Response({
+                
+                'status':True,
+                'message':'User registered succesfully',
+                'status':status.HTTP_201_CREATED
+                
+            })
         
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data,status=status.HTTP_201_CREATED)
-        
-        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
+    
         
 class UserLoginView(generics.GenericAPIView):
     
@@ -47,21 +61,6 @@ class UserLoginView(generics.GenericAPIView):
         data=request.data 
         user=request.user
         
-        serializer=self.serializer_class(data=data)
-        
-        user.object.filter(email=email)
-        if not user.exists():
-            return Response({
-                'status': False,
-                'message': 'User with this email does not exist, kindly sign up'
-            }, status=status.HTTP_403_FORBIDDEN)
-            
-        if not  serializer.is_valid():
-            serializer.save()
-            return Response(errors=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-      
-        
-        
         
         
         serializer=self.serializer_class(data=data)
@@ -70,22 +69,32 @@ class UserLoginView(generics.GenericAPIView):
                 'status':False,
                 'message': 'invalid data provided',
                 "errors": serializer.errors
-                
-
             })
         
-        
-            
-        
         email = request.data.get('email')
-        print(email)
-        user = User.objects.filter(email=email)
+        password = request.data.get('password')
         
-        if  not user.exists():
+        email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        valid_email = re.fullmatch(email_regex, email)
+        
+        user = User.objects.filter(email=email)
+        if not user.exists():
             return Response({
                 'status': False,
-                'message': 'User with this email  does not exists'
-            }, status=status.HTTP_403_FORBIDDEN)
+                'message': 'User with this email does not exist, kindly sign up'
+            }, status=status.HTTP_404_NOT_FOUND)
     
+        
+        
+    
+        user =authenticate(username=email,password=password)
+        
+        if user is None:
+            return Response ({
+                
+                'status' : False,
+                'message' : 'provide correct password and username'  
+                
+            })
     
        
