@@ -6,12 +6,6 @@ from django.contrib.auth import get_user_model, authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 User=get_user_model()
 # Create your views here.
-
-class HelloAuthView(generics.GenericAPIView):
-    def get(self,request):
-        return Response(data={"message":"Hello Auth"},status=status.HTTP_200_OK)
-        
-        
 class UserCreateView(generics.GenericAPIView):
     serializer_class=serializers.UserCreationSerializer
     def post(self,request):
@@ -39,11 +33,17 @@ class UserCreateView(generics.GenericAPIView):
                 'message':'User registered succesfully',
                 'status':status.HTTP_201_CREATED
                 
-            })     
+            })
+
+
+class ResfreshToken:
+    pass
+
+
 class UserLoginView(generics.GenericAPIView):
     
     serializer_class=serializers.UserLoginSerializer    
-    
+           
     def post(self,request):
         try: 
             data=request.data 
@@ -65,12 +65,12 @@ class UserLoginView(generics.GenericAPIView):
                     'status': False,
                     'message': 'User with this email does not exist, kindly sign up'
                 }, status=status.HTTP_404_NOT_FOUND)  
-            user =authenticate(username=email,password=password)         
+            user = authenticate(username=email,password=password)         
             if user is None:
                 return Response ({
                     
-                    'status' : False,
-                    'message' : 'provide correct password and username'                  
+                    'status': False,
+                    'message': 'provide correct password and username'                  
                 })      
             refresh = ResfreshToken.for_user(user)           
             return Response({

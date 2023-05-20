@@ -9,16 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 class HelloOrderView(generics.GenericAPIView):
     def get(self,request):
         return Response(data={"message":"Hello Orders"},status=status.HTTP_200_OK)
-    
-
-
 
 class OrderCreateListView(generics.GenericAPIView):
     serializer_class=serializers.OrderCreationSerializer
     queryset=Order.objects.all()
-    permission_classes=[IsAuthenticated]
-    
-    
+    permission_classes=[IsAuthenticated]   
     def get(self,request):
         
         orders=Order.objects.all()
@@ -32,27 +27,18 @@ class OrderCreateListView(generics.GenericAPIView):
         
         serializer=self.serializer_class(data=data)
         
-        user=request.user
-        
-        
-        
+        user=request.user       
         if serializer.is_valid():
             serializer.save(customer=user)
             
             return Response(data=serializer.data,status=status.HTTP_201_CREATED)
         
-        return Response(data=serializer.errors,status=status.HTTP_200_BAD_REQUEST)
-        
-        
-    
-    
+        return Response(data=serializer.errors,status=status.HTTP_200_BAD_REQUEST)    
 class OrderDetailView(generics.GenericAPIView):
     serializer_class=serializers.OrderDetailSerializer
     permission_classes=[IsAuthenticated]
     
-    def get(self,request,order_id):
-        
-        
+    def get(self,request,order_id):        
         order=get_object_or_404(Order,pk=order_id)
         
         serializer=self.serializer_class(instance=order)
@@ -64,25 +50,19 @@ class OrderDetailView(generics.GenericAPIView):
         
         order=get_object_or_404(Order,pk=order_id)
         
-        serializer=self.serializer_class(data=data, instance=order)
-        
-        
+        serializer=self.serializer_class(data=data, instance=order)       
         if serializer.is_valid():
             serializer.save()
             
             return Response(data=serializer.data,status=status.HTTP_200_OK)
         
-        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
-    
+        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)   
     def delete(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
         
         order.delete
         
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
 class UpdateOrderStatus(generics.GenericAPIView):
     serializer_class=serializers.OrderStatusUpdateSerializer
     
@@ -98,20 +78,14 @@ class UpdateOrderStatus(generics.GenericAPIView):
             
             return Response(data=serializer.data,status=status.HTTP_200_OK)
         
-        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
-        
+        return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST)      
     def delete(self,request):
         order=get_object_or_404(Order,pk=order_id)
         
         order.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)    
-    
-    
+        return Response(status=status.HTTP_204_NO_CONTENT)     
 class UpdateOrderStatus(generics.GenericAPIView):
     serializer_class=serializers.OrderStatusUpdateSerializer
-    
-    
     def put(self,request,order_id):
         
         order=get_object_or_404(Order,pk=order_id)

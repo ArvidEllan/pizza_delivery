@@ -33,8 +33,6 @@ class CustomUserManager(BaseUserManager):
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True'))
-
-
         return self.create_user(email,password,**extra_fields)
 
 
@@ -44,13 +42,7 @@ class User(AbstractUser):
     phone_number=models.CharField(max_length=10,unique=True,null=True,blank=True)
     date_joined=models.DateTimeField(_('Date'),auto_now_add=True)
 
-
     REQUIRED_FIELDS=['phone_number','email']
-    
-    
-    
-
-    
     objects=CustomUserManager()
     
     def __str__(self):
