@@ -18,6 +18,8 @@ class UserLoginSerializer(serializers.Serializer):
     password=serializers.CharField(min_length=8)
     
     
-        
+class AdminLoginSerializer(serializers.Serializer):
+     email=serializers.EmailField(max_length=80)
+     password =serializers.CharField(min_length=8)       
         
         

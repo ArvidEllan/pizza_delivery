@@ -4,16 +4,15 @@ from rest_framework.response import Response
 from . import serializers
 from django.contrib.auth import get_user_model, authenticate 
 from rest_framework_simplejwt.tokens import RefreshToken
+import re
 User=get_user_model()
 # Create your views here.
 class UserCreateView(generics.GenericAPIView):
     serializer_class=serializers.UserCreationSerializer
     def post(self,request):
         data=request.data
-        serializer=self.serializer_class(data=data)
-        
-        if not serializer.is_valid():
-            
+        serializer=self.serializer_class(data=data)  
+        if not serializer.is_valid():         
                 return Response({
                     'message':'invalid information',
                     'status':status.HTTP_400_BAD_REQUEST,
@@ -27,23 +26,13 @@ class UserCreateView(generics.GenericAPIView):
                 'message': 'User with this email exists'
             }, status=status.HTTP_403_FORBIDDEN)
         else:
-            return Response({
-                
+            return Response({          
                 'status':True,
                 'message':'User registered succesfully',
-                'status':status.HTTP_201_CREATED
-                
+                'status':status.HTTP_201_CREATED             
             })
-
-
-class ResfreshToken:
-    pass
-
-
-class UserLoginView(generics.GenericAPIView):
-    
-    serializer_class=serializers.UserLoginSerializer    
-           
+class UserLoginView(generics.GenericAPIView):    
+    serializer_class=serializers.UserLoginSerializer             
     def post(self,request):
         try: 
             data=request.data 
@@ -72,7 +61,7 @@ class UserLoginView(generics.GenericAPIView):
                     'status': False,
                     'message': 'provide correct password and username'                  
                 })      
-            refresh = ResfreshToken.for_user(user)           
+            refresh = RefreshToken.for_user(user)           
             return Response({
                 'status': True,
                 'message' : 'login successful',
@@ -86,3 +75,58 @@ class UserLoginView(generics.GenericAPIView):
                 'status':False,
                 'message' :'cannot log you in'
             },status=status.HTTP_403_FORBIDDEN)
+            
+class AdminLoginView(generics.GenericAPIView):
+    serializer_class=serializers.AdminLoginSerializer
+    def post(self, request):
+        try:
+            data = request.data
+            serializer = self.serializer_class(data=data)
+            if not serializer.is_valid():
+                return Response({
+                    'status': False,
+                    'message': 'Invalid data provided',
+                    'errors': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            email = request.data.get('email')
+            password = request.data.get('password')
+
+            email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            valid_email = re.fullmatch(email_regex, email)
+            if not valid_email:
+                return Response({
+                    'status': False,
+                    'message': 'Provide a valid email',
+                    'errors': {'email': ['Enter a valid email address.']}
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            check_user = User.objects.filter(username=email)
+            if not check_user.exists():
+                return Response({
+                    'status': False,
+                    'message': 'User does not exist',
+                    'errors': {'email': ['User with this email does not exist.']}
+                }, status=status.HTTP_400_BAD_REQUEST)
+            user = check_user.first()
+            allowed_roles = [ 'admin' , 'super admin']
+            if not user.role.short_name is allowed_roles:
+                return Response({
+                    'status' : False,
+                    'message' : 'You cannot access the admin portal',
+                    'errors' : serializers.errors
+                },status=status.HTTP_403_FORBIDDEN)
+            user = authenticate(username=email,password=password)
+            if user is None:
+                return Response({
+                    'status' : False,
+                    'message' : 'Please Provide the correct username and password',   
+                })
+        #what the hecki
+        except Exception as error:
+            print('ERROR:', str(error))
+            return Response({
+                'status': False,
+                'message': 'Sorry. We could not log you in.',
+                'detail': str(error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
